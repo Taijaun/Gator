@@ -1,45 +1,54 @@
 import fs from "fs";
-import ost from "os";
+import os from "os";
 import path from "path";
 
-export type Config = {
-    dbUrl: string,
-    currentUserName: string
+type Config = {
+  dbUrl: string;
+  currentUserName: string | undefined
 };
 
-export function setUser(username: string, config: Config){
-    config.currentUserName = username;
-    writeConfig(config);
-
+export function setUser(userName: string) {
+  const config = readConfig();
+  config.currentUserName = userName;
+  writeConfig(config);
 }
 
-export function readConfig(){
-    const path = getConfigFilePath()
-    const json = fs.readFileSync(path, "utf-8");
-    const jsonToObj = JSON.parse(json);
-    return validateConfig(jsonToObj);
+function validateConfig(rawConfig: any) {
+  if (!rawConfig.db_url || typeof rawConfig.db_url !== "string") {
+    throw new Error("db_url is required in config file");
+  }
+
+  const config: Config = {
+    dbUrl: rawConfig.db_url,
+    currentUserName: rawConfig.current_user_name,
+  };
+
+  return config;
+}
+
+export function readConfig() {
+  const fullPath = getConfigFilePath();
+
+  const data = fs.readFileSync(fullPath, "utf-8");
+  const rawConfig = JSON.parse(data);
+
+  return validateConfig(rawConfig);
 }
 
 function getConfigFilePath() {
-   const home = ost.homedir();
-   const filePath = path.join(home, ".gatorconfig.json");
-   return filePath;
+  const configFileName = ".gatorconfig.json";
+  const homeDir = os.homedir();
+  return path.join(homeDir, configFileName);
 }
 
 function writeConfig(config: Config) {
-    const data = JSON.stringify(config);
-    fs.writeFileSync(getConfigFilePath(), data);
-}
+  const fullPath = getConfigFilePath();
 
-function validateConfig(rawConfig: any): Config {
-    if ("dbUrl" in rawConfig && "currentUserName" in rawConfig){
-        if (typeof rawConfig.dbUrl == "string" && typeof rawConfig.currentUserName == "string"){
-            const config: Config = {
-                dbUrl: rawConfig.dbUrl,
-                currentUserName: rawConfig.currentUserName
-            };
-            return config;
-        }
-    }
-    throw new Error("Invalid config file");
+  const rawConfig = {
+    db_url: config.dbUrl,
+    current_user_name: config.currentUserName,
+  };
+
+  const data = JSON.stringify(rawConfig, null, 2);
+  fs.writeFileSync(fullPath, data, { encoding: "utf-8" });
 }
