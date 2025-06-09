@@ -1,4 +1,4 @@
-import { db } from "..";
+import { db } from "../index";
 import { users } from "../schema";
 import { eq } from "drizzle-orm";
 
@@ -8,6 +8,7 @@ export async function createUser(name: string) {
 }
 
 export async function getUserByName(username: string){
-    const [result] = await db.select().from(users).where(eq(users.name, username))
+    const [result] = await db.select().from(users).where(eq(users.name, username));
+
     return result;
 }
