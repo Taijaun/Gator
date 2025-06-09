@@ -12,3 +12,8 @@ export async function getUserByName(username: string){
 
     return result;
 }
+
+export async function getUsers() {
+    const result = await db.select().from(users);
+    return result;
+}

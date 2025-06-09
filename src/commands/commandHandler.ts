@@ -1,5 +1,5 @@
-import { createUser, getUserByName } from "src/db/queries/users.js";
-import { setUser } from "../config.js"
+import { createUser, getUserByName, getUsers } from "src/db/queries/users.js";
+import { readConfig, setUser } from "../config.js"
 import { db } from "src/db/index.js";
 import { sql } from "drizzle-orm";
 
@@ -59,4 +59,18 @@ export async function handlerReset(cmdName: string, ...args: string[]) {
     await db.execute(sql`TRUNCATE TABLE users`);
     console.log("Db cleared");
     process.exit(0);
+}
+
+export async function handlerUsers(cmdName: string, ...args: string[]) {
+    const users = await getUsers();
+    const currentUser = readConfig().currentUserName;
+
+
+    for (const name of users) {
+        if (name.name === currentUser){
+            console.log(`* ${name.name} (current)`);
+        } else {
+            console.log(`* ${name.name}`);
+        }
+    }
 }
