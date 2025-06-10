@@ -1,5 +1,7 @@
 import { XMLParser } from "fast-xml-parser";
 import { RSSFeed, RSSItem } from "./rssfeed";
+import { feedFollows } from "src/db/schema";
+import { db } from "src/db";
 
 export async function fetchFeed(feedURL: string) {
     const response = await fetch(feedURL, {

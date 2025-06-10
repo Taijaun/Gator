@@ -15,6 +15,13 @@
       "when": 1749547613152,
       "tag": "0001_spotty_robbie_robertson",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1749569058337,
+      "tag": "0002_exotic_magdalene",
+      "breakpoints": true
     }
   ]
 }

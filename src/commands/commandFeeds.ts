@@ -15,7 +15,6 @@ export async function handlerFeeds(cmdName: string, ...args: string[]){
         console.log(feedName);
         console.log(feedUrl);
         console.log(userName);
-        
     }
 
 }
