@@ -1,6 +1,11 @@
-import { readConfig, setUser } from "./config";
-import { CommandsRegistry, handlerAddFeed, handlerAgg, handlerLogin, handlerRegister, handlerReset, handlerUsers, registerCommand, runCommand} from "./commands/commandHandler.js"
 
+import { CommandsRegistry, registerCommand, runCommand} from "./commands/commandHandler.js"
+import { handlerAddFeed } from "./commands/commandAddFeed";
+import { handlerAgg } from "./commands/commandAgg.js";
+import { handlerUsers } from "./commands/commandUsers.js";
+import { handlerReset } from "./commands/commandReset.js";
+import { handlerRegister } from "./commands/commandRegister.js";
+import { handlerLogin } from "./commands/commandLogin.js";
 
 
 async function main() {
