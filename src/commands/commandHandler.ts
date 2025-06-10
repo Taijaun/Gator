@@ -3,6 +3,9 @@ import { readConfig, setUser } from "../config.js"
 import { db } from "src/db/index.js";
 import { sql } from "drizzle-orm";
 import { fetchFeed } from "src/rss/feed.js";
+import { createFeed, getFeedByUrl } from "src/db/queries/feeds.js";
+import { Feed, User } from "src/db/schema.js";
+
 
 export type CommandHandler = (cmdName: string, ...args: string[]) => Promise<void>;
 
@@ -57,7 +60,8 @@ export async function handlerReset(cmdName: string, ...args: string[]) {
         console.log("Reset does not require any arguments.");
         process.exit(1);
     }
-    await db.execute(sql`TRUNCATE TABLE users`);
+    await db.execute(sql`TRUNCATE TABLE feeds, users CASCADE`);
+    
     console.log("Db cleared");
     process.exit(0);
 }
@@ -83,4 +87,50 @@ export async function handlerAgg(cmdName: string, ...args: string[]){
     for (const title of feed.channel.item){
         console.log(title);
     };
+}
+
+export async function handlerAddFeed(cmdName: string, ...args: string[]){
+    if (args.length !== 2) {
+        throw new Error(`usage: ${cmdName} <feed_name> <url>`);
+    }
+
+    const feedLength = await getFeedByUrl(args[1]);
+
+    if (feedLength > 0) {
+        throw new Error("This feed already exists in the db");
+    }
+
+    const user = readConfig();
+    const loggedInUsername = user.currentUserName;
+    let loggedInUserId;
+    let userObj;
+    
+    if (typeof(loggedInUsername) === "string") {
+        userObj = await getUserByName(loggedInUsername);
+        if (!userObj){
+            throw new Error("User does nto exist");
+        }
+        loggedInUserId = userObj.id
+    } else {
+        return;
+    }
+    
+    
+
+    const feed = await createFeed(args[0], args[1], loggedInUserId);
+    if (!feed){
+        throw new Error("Failed to create feed");
+    }
+
+    console.log("Feed created.");
+    printFeed(feed, userObj);
+}
+
+function printFeed(feed: Feed, user: User) {
+  console.log(`* ID:            ${feed.id}`);
+  console.log(`* Created:       ${feed.createdAt}`);
+  console.log(`* Updated:       ${feed.updatedAt}`);
+  console.log(`* name:          ${feed.name}`);
+  console.log(`* URL:           ${feed.url}`);
+  console.log(`* User:          ${user.name}`);
 }
