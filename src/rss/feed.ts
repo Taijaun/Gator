@@ -13,11 +13,11 @@ export async function fetchFeed(feedURL: string) {
 
     const responseObj = xmlParser.parse(textResponse);
 
-    if (!responseObj.channel){
+    if (!responseObj.rss || (responseObj.rss && !responseObj.rss.channel)){
         throw new Error("Channel does not exist")
     }
 
-    const channel = responseObj.channel;
+    const channel = responseObj.rss.channel;
 
     if (!("title" in channel) && !("link" in channel) && !("description"in channel)){
         throw new Error("fields not present in channel");

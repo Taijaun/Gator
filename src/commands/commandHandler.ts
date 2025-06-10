@@ -2,6 +2,7 @@ import { createUser, getUserByName, getUsers } from "src/db/queries/users.js";
 import { readConfig, setUser } from "../config.js"
 import { db } from "src/db/index.js";
 import { sql } from "drizzle-orm";
+import { fetchFeed } from "src/rss/feed.js";
 
 export type CommandHandler = (cmdName: string, ...args: string[]) => Promise<void>;
 
@@ -73,4 +74,13 @@ export async function handlerUsers(cmdName: string, ...args: string[]) {
             console.log(`* ${name.name}`);
         }
     }
+}
+
+export async function handlerAgg(cmdName: string, ...args: string[]){
+    const url = "https://www.wagslane.dev/index.xml";
+    const feed = await fetchFeed(url);
+
+    for (const title of feed.channel.item){
+        console.log(title);
+    };
 }
