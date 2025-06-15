@@ -4,10 +4,16 @@ import { feeds, users, feedFollows } from "../schema";
 import { eq } from "drizzle-orm";
 import { firstOrUndefined } from "./utility";
 
-export async function getFeedByUrl(url: string){
+export async function getFeedsByUrl(url: string){
     const result = await db.select().from(feeds).where(eq(feeds.url, url));
 
-    return result.length;
+    return result;
+}
+
+export async function getSingleFeedByUrl(url: string){
+    const [result] = await db.select().from(feeds).where(eq(feeds.url, url));
+
+    return result;
 }
 
 export async function createFeed(
@@ -42,5 +48,23 @@ export async function createFeedFollow(userId: string, feedId: string) {
     .innerJoin(feeds, eq(feedFollows.feedId, feeds.id))
     .innerJoin(users, eq(feedFollows.userId, users.id))
     .where(eq(feedFollows.id, newFeedFollow.id));
+
+    return result;
+}
+
+export async function getFeedFollowsForUser(userId: string){
+
+    const result = await db.select({
+        feedFollows: feedFollows.id,
+        usersName: users.name,
+        feedsName: feeds.name
+    })
+    .from(feedFollows)
+    .innerJoin(users, eq(feedFollows.userId, users.id))
+    .innerJoin(feeds, eq(feedFollows.feedId, feeds.id))
+    .where(eq(feedFollows.userId, userId))
+
+    return result;
+
 }
 

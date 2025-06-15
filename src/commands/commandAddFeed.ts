@@ -10,7 +10,7 @@ export async function handlerAddFeed(cmdName: string, ...args: string[]){
 
     const feedLength = await getFeedByUrl(args[1]);
 
-    if (feedLength > 0) {
+    if (feedLength.length > 0) {
         throw new Error("This feed already exists in the db");
     }
 
