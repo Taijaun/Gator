@@ -34,7 +34,7 @@ export const feedFollows = pgTable("feed_follows", {
         .defaultNow()
         .$onUpdate(() => new Date()),
     userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade"}),
-    feedId: uuid("Feed_id").notNull().unique().references(() => feeds.id, { onDelete: "cascade"})
+    feedId: uuid("Feed_id").notNull().references(() => feeds.id, { onDelete: "cascade"})
 },
     (table) => ({
         uniqueCombo: unique("unique_combo").on(table.userId, table.feedId)

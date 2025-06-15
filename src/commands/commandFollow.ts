@@ -9,7 +9,7 @@ export async function handlerFollow(cmdName: string, ...args: string[]){
         throw new Error(`usage: ${cmdName}  <url>`);
     }
     const user = readConfig()
-    const LoggedInUsername = user.currentUserName
+    const LoggedInUsername = user.currentUserName;
     let userUUID;
 
     if (typeof(LoggedInUsername) === "string"){
