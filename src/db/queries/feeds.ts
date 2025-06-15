@@ -1,7 +1,7 @@
 import { readConfig } from "src/config";
 import { db } from "../index";
 import { feeds, users, feedFollows } from "../schema";
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 import { firstOrUndefined } from "./utility";
 
 export async function getFeedsByUrl(url: string){
@@ -36,7 +36,7 @@ export async function createFeed(
 export async function createFeedFollow(userId: string, feedId: string) {
     const [newFeedFollow] = await db.insert(feedFollows).values({userId: userId, feedId: feedId}).returning();
 
-    const result = await db.select({
+    const [result] = await db.select({
         feedFollowsId: feedFollows.id,
         feedFollowsCreatedAt: feedFollows.createdAt,
         feedFollowsUpdatedAt: feedFollows.updatedAt,
@@ -47,7 +47,11 @@ export async function createFeedFollow(userId: string, feedId: string) {
     .from(feedFollows)
     .innerJoin(feeds, eq(feedFollows.feedId, feeds.id))
     .innerJoin(users, eq(feedFollows.userId, users.id))
-    .where(eq(feedFollows.id, newFeedFollow.id));
+    .where(and (
+        eq(feedFollows.id, newFeedFollow.id),
+        eq(users.id, newFeedFollow.userId)
+    ))
+    
 
     return result;
 }
@@ -66,5 +70,19 @@ export async function getFeedFollowsForUser(userId: string){
 
     return result;
 
+}
+
+export async function doesUserFollowFeed(userId: string, feedId: string){
+
+    const result = await db.select().from(feedFollows).where(and(
+        eq(feedFollows.userId, userId),
+        eq(feedFollows.feedId, feedId)
+    ));
+
+    if (result.length == 0){
+        return false;
+    } else {
+        return true;
+    }
 }
 
