@@ -1,4 +1,4 @@
-import { getFeedByUrl, createFeed } from "src/db/queries/feeds";
+import { getFeedsByUrl, createFeed, createFeedFollow } from "src/db/queries/feeds";
 import { readConfig } from "src/config";
 import { getUserByName } from "src/db/queries/users";
 import { Feed, User } from "src/db/schema";
@@ -8,7 +8,7 @@ export async function handlerAddFeed(cmdName: string, ...args: string[]){
         throw new Error(`usage: ${cmdName} <feed_name> <url>`);
     }
 
-    const feedLength = await getFeedByUrl(args[1]);
+    const feedLength = await getFeedsByUrl(args[1]);
 
     if (feedLength.length > 0) {
         throw new Error("This feed already exists in the db");
@@ -35,6 +35,8 @@ export async function handlerAddFeed(cmdName: string, ...args: string[]){
     if (!feed){
         throw new Error("Failed to create feed");
     }
+
+    await createFeedFollow(userObj.id, feed.id);
 
     console.log("Feed created.");
     printFeed(feed, userObj);
