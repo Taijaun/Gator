@@ -1,19 +1,11 @@
 import { readConfig } from "src/config";
 import { getFeedFollowsForUser } from "src/db/queries/feeds";
 import { getUserByName } from "src/db/queries/users";
+import { User } from "src/db/schema";
 
-export async function handlerFollowing(cmdName: string, ...args: string[]){
-    const user = readConfig()
-    const LoggedInUsername = user.currentUserName;
-    let userUUID;
+export async function handlerFollowing(cmdName: string, user: User, ...args: string[]){
 
-    if (typeof(LoggedInUsername) === "string"){
-        userUUID = await getUserByName(LoggedInUsername);
-    } else {
-        throw new Error("No user to check");
-    }
-
-    const feeds = await getFeedFollowsForUser(userUUID.id);
+    const feeds = await getFeedFollowsForUser(user.id);
 
     for (const feed of feeds){
         console.log(feed.feedsName);

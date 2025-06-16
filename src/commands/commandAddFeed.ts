@@ -3,7 +3,7 @@ import { readConfig } from "src/config";
 import { getUserByName } from "src/db/queries/users";
 import { Feed, User } from "src/db/schema";
 
-export async function handlerAddFeed(cmdName: string, ...args: string[]){
+export async function handlerAddFeed(cmdName: string, user: User, ...args: string[]){
     if (args.length !== 2) {
         throw new Error(`usage: ${cmdName} <feed_name> <url>`);
     }
@@ -14,32 +14,15 @@ export async function handlerAddFeed(cmdName: string, ...args: string[]){
         throw new Error("This feed already exists in the db");
     }
 
-    const user = readConfig();
-    const loggedInUsername = user.currentUserName;
-    let loggedInUserId;
-    let userObj;
-    
-    if (typeof(loggedInUsername) === "string") {
-        userObj = await getUserByName(loggedInUsername);
-        if (!userObj){
-            throw new Error("User does nto exist");
-        }
-        loggedInUserId = userObj.id
-    } else {
-        return;
-    }
-    
-    
-
-    const feed = await createFeed(args[0], args[1], loggedInUserId);
+    const feed = await createFeed(args[0], args[1], user.id);
     if (!feed){
         throw new Error("Failed to create feed");
     }
 
-    await createFeedFollow(userObj.id, feed.id);
+    await createFeedFollow(user.id, feed.id);
 
     console.log("Feed created.");
-    printFeed(feed, userObj);
+    printFeed(feed, user);
 }
 
 function printFeed(feed: Feed, user: User) {
