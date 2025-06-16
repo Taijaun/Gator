@@ -86,3 +86,12 @@ export async function doesUserFollowFeed(userId: string, feedId: string){
     }
 }
 
+export async function deleteFollowRecord(userId: string, feedId: string){
+
+    const result = await db.delete(feedFollows).where(and(
+        eq(feedFollows.userId, userId),
+        eq(feedFollows.feedId, feedId)
+    ))
+    .returning()
+}
+
