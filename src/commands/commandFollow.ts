@@ -14,8 +14,6 @@ export async function handlerFollow(cmdName: string, user: User, ...args: string
 
     console.log("User UUID:", user.id);
     console.log("Feed UUID:", feedUUID);
-    console.log("User ID:", user.id);
-    console.log("Feed ID:", feedUUID?.id);
 
     const userAlreadyFollows = await doesUserFollowFeed(user.id, feedUUID.id);
 

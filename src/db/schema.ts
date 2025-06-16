@@ -53,3 +53,5 @@ export const posts = pgTable("posts", {
     publishedAt: timestamp("published_at"),
     feedId: uuid("feed_id").notNull().references(() => feeds.id)
 })
+
+export type Post = typeof posts.$inferInsert;
