@@ -1,8 +1,9 @@
 import { readConfig } from "src/config";
 import { db } from "../index";
-import { feeds, users, feedFollows } from "../schema";
-import { eq, and } from "drizzle-orm";
+import { feeds, users, feedFollows, Feed } from "../schema";
+import { eq, and, sql } from "drizzle-orm";
 import { firstOrUndefined } from "./utility";
+import { fetchFeed } from "src/rss/feed";
 
 export async function getFeedsByUrl(url: string){
     const result = await db.select().from(feeds).where(eq(feeds.url, url));
@@ -93,5 +94,51 @@ export async function deleteFollowRecord(userId: string, feedId: string){
         eq(feedFollows.feedId, feedId)
     ))
     .returning()
+}
+
+export async function markFeedFetched(feedId: string) {
+    const result = await db.update(feeds)
+        .set({updatedAt: sql`NOW()`, lastFetchedAt: sql`NOW()`})
+        .where(eq(feeds.id, feedId))
+}
+
+export async function getNextFeedToFetch(){
+    const [feed] = await db.execute<Feed>(sql`
+        SELECT * FROM feeds
+        ORDER BY last_fetched_at NULLS FIRST
+        Limit 1
+    `)
+
+    if (!feed){
+        return
+    }
+
+    const feedId = feed.id;
+
+    if (typeof(feedId) !== "string"){
+        return;
+    }
+
+    await markFeedFetched(feedId);
+    return feed;
+
+}
+
+export async function scrapeFeeds(){
+    const nextFeed = await getNextFeedToFetch();
+
+    if (!nextFeed){
+        return;
+    }
+
+    if (typeof(nextFeed.url) !== "string"){
+        return;
+    }
+
+    const feeds = await fetchFeed(nextFeed.url);
+
+    for (const item of feeds.channel.item){
+        console.log(`${item.title}`);
+    }
 }
 
