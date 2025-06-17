@@ -27,26 +27,27 @@ It allows multiple users to register, add feeds, follow/unfollow feeds, and view
    npm install
 
 2. **Configure your database**
-	Create a PostgreSQL database and note its connection URL (e.g. 		postgres://user:pass@localhost:5432/gatordb).
+    Create a PostgreSQL database and note its connection URL (e.g. 		 
+    postgres://user:pass@localhost:5432/gatordb).
 
 3. **Create a config file**
-In the project root, create drizzle.config.ts (or .js) to point Drizzle at your DB:
+    In the project root, create drizzle.config.ts (or .js) to point Drizzle at your DB:
 
-import { defineConfig } from "drizzle-kit";
+   import { defineConfig } from "drizzle-kit";
 
-export default defineConfig({
-  schema: "src/db/schema.ts",
-  out: "src/gen",
-  dialect: "postgresql",
-  dbCredentials: {
+    export default defineConfig({
+    schema: "src/db/schema.ts",
+    out: "src/gen",
+    dialect: "postgresql",
+    dbCredentials: {
     url: "postgres://user:pass@localhost:5432/gatordb",
   },
 });
 
 4. **Run migrations (with Drizzle Kit)**
 
-npx drizzle-kit generate --config ./drizzle.config.ts
-npx drizzle-kit push --config ./drizzle.config.ts
+    npx drizzle-kit generate --config ./drizzle.config.ts
+    npx drizzle-kit push --config ./drizzle.config.ts
 
 
 
