@@ -1,8 +1,3 @@
-Here’s a README.md template tailored for your Gator RSS Feed Aggregator CLI project. Feel free to tweak names, paths, or examples as needed:
-
-⸻
-
-
 # Gator 🦅
 
 Gator is a **command-line RSS feed aggregator** built with Node.js/TypeScript and PostgreSQL.  
