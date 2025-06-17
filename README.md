@@ -66,7 +66,7 @@ npx tsx ./src/index.ts <command> [args]
 
 ⸻
 
-📚 Available Commands
+📚 Available Commands<br>
 	•	register <username> <br>
 Create a new user and log in as them.<br>
 	•	login <username><br>
