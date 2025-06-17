@@ -67,26 +67,26 @@ npx tsx ./src/index.ts <command> [args]
 ⸻
 
 📚 Available Commands
-	•	register <username>
-Create a new user and log in as them.
-	•	login <username>
-Log in as an existing user.
-	•	addfeed <name> <url>
-Add a new RSS feed to the system.
-	•	feeds
-List all available feeds along with creator info.
-	•	follow <url> / unfollow <url>
-Follow or unfollow a feed as the current user.
-	•	following
-List all feeds the current user follows.
-	•	agg <interval>
-Fetch and aggregate new posts from followed feeds periodically (e.g., agg 10s, agg 5m).
-	•	browse [limit]
-View the latest aggregated posts (default limit is 10).
-	•	users
-List all registered users.
-	•	reset
-Delete all database data (nothing critical—local dev only).
+	•	register <username> <br>
+Create a new user and log in as them.<br>
+	•	login <username><br>
+Log in as an existing user.<br>
+	•	addfeed <name> <url><br>
+Add a new RSS feed to the system.<br>
+	•	feeds<br>
+List all available feeds along with creator info.<br>
+	•	follow <url> / unfollow <url><br>
+Follow or unfollow a feed as the current user.<br>
+	•	following<br>
+List all feeds the current user follows.<br>
+	•	agg <interval><br>
+Fetch and aggregate new posts from followed feeds periodically (e.g., agg 10s, agg 5m).<br>
+	•	browse [limit]<br>
+View the latest aggregated posts (default limit is 10).<br>
+	•	users<br>
+List all registered users.<br>
+	•	reset<br>
+Delete all database data (nothing critical—local dev only).<br>
 
 ⸻
 
