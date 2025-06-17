@@ -8,9 +8,18 @@ export async function handlerBrowse(cmdName: string, user: User, ...args: string
         throw new Error("Limit must be a valid number.");
     }
 
+    if (limit <= 0){
+        throw new Error("Limit must be at least 1");
+    }
+
     const posts = await getPostsForUser(limit, user.id);
 
+    if(posts.length === 0){
+        console.log("There are no posts");
+        return;
+    }
+
     for (const post of posts){
-        console.log(`${post.id} - ${post.title}`)
+        console.log(`${post.title} - ${post.url}`);
     }
 }

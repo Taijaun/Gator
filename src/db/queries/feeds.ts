@@ -1,9 +1,10 @@
 import { readConfig } from "src/config";
 import { db } from "../index";
-import { feeds, users, feedFollows, Feed } from "../schema";
+import { feeds, users, feedFollows, Feed, Post } from "../schema";
 import { eq, and, sql } from "drizzle-orm";
 import { firstOrUndefined } from "./utility";
 import { fetchFeed } from "src/rss/feed";
+import { createPost } from "./posts";
 
 export async function getFeedsByUrl(url: string){
     const result = await db.select().from(feeds).where(eq(feeds.url, url));
@@ -131,14 +132,33 @@ export async function scrapeFeeds(){
         return;
     }
 
+    if (!nextFeed.id){
+        return;
+    }
+
     if (typeof(nextFeed.url) !== "string"){
         return;
     }
 
     const feeds = await fetchFeed(nextFeed.url);
+    
 
     for (const item of feeds.channel.item){
         console.log(`${item.title}`);
+        console.log(nextFeed.id);
+
+        const post: Post = {
+            title: item.title,
+            url: item.link,
+            description: item.description,
+            publishedAt: item.pubDate ? new Date(item.pubDate) : undefined,
+            feedId: nextFeed.id,
+        };
+
+        await createPost(post)
+
+
+        
     }
 }
 

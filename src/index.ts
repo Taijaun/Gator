@@ -11,6 +11,7 @@ import { handlerFollow } from "./commands/commandFollow.js";
 import { handlerFollowing } from "./commands/commandFollowing.js";
 import { middlewareLoggedIn } from "./middleware/middlewareLoggedIn.js";
 import { handlerUnfollow } from "./commands/commandUnfollow.js";
+import { handlerBrowse } from "./commands/commandBrowse.js";
 
 
 async function main() {
@@ -25,6 +26,7 @@ async function main() {
     registerCommand(registry, "follow", middlewareLoggedIn(handlerFollow));
     registerCommand(registry, "following", middlewareLoggedIn(handlerFollowing));
     registerCommand(registry, "unfollow", middlewareLoggedIn(handlerUnfollow));
+    registerCommand(registry, "browse", middlewareLoggedIn(handlerBrowse));
 
     const args = process.argv.slice(2);
 

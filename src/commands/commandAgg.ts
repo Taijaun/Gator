@@ -2,7 +2,7 @@ import { scrapeFeeds } from "src/db/queries/feeds";
 import { fetchFeed } from "src/rss/feed";
 
 export async function handlerAgg(cmdName: string, ...args: string[]){
-    const timeBetweenReqsStr = args[0];
+    const timeBetweenReqsStr = args[0] ?? "30s";
     const timebetweenReqs = parseDuration(timeBetweenReqsStr);
 
     console.log(`Collecting feeds every ${timeBetweenReqsStr}`);
@@ -22,6 +22,9 @@ export async function handlerAgg(cmdName: string, ...args: string[]){
 }
 
 function parseDuration(durationStr: string): number {
+    if (typeof durationStr !== "string"){
+        throw new Error("Duration string is required.");
+    }
     const regex = /^(\d+)(ms|s|m|h)$/;
     const match = durationStr.match(regex);
 
